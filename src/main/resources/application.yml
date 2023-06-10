@@ -1,0 +1,63 @@
+KAFKA_URL: localhost:9092
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
+    open-in-view: false
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:test;MODE=MariaDB;DATABASE_TO_LOWER=TRUE;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;DB_CLOSE_DELAY=-1
+  sql:
+    init:
+      mode: ALWAYS
+  liquibase:
+    change-log: classpath:db-migration/master.yml
+  main:
+    allow-bean-definition-overriding: true
+  kafka:
+    bootstrap-servers: ${KAFKA_URL}
+
+liquibase:
+  enabled: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+management:
+  info.env.enabled: true
+  endpoint.health.show-details: always
+  endpoints.web:
+    base-path: /
+    exposure:
+      include: '*'
+  server.port: 8081
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+kafka:
+  defaultSettings:
+    bootstrap.servers: ${KAFKA_URL}
+    default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+  httpRequestTraceReport:
+    topicName: 'shopping_item_http_trace_reporting'
+
+# just for simplicity adding data unencrypted
+application:
+  security:
+    adminRole:
+      username: admin
+      password: admin
+
+caching:
+  specs:
+    getAllItems:
+      timeoutSeconds: 60
+      max: 100

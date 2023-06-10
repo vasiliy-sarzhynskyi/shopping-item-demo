@@ -1,0 +1,3 @@
+embedded:
+  kafka:
+    topicsToCreate: shopping_item_http_trace_reporting
